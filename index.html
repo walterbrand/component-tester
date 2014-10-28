@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html ng-app="app">
+    <head></head>
+    <body>
+        <script src="angular.js"></script>
+        <script src="apitester.js"></script>
+        <script>
+            angular.module('app',['apitester'])
+                .controller('TestController', function(){
+                    this.bla = {mode:'static'}
+                    this.doe = {iets:9}
+                    this.dat=10;
+                    this.do = {
+                        value : '4'
+                    }
+                })
+                .directive('sampleComponent',['$timeout', function($timeout){
+                    return {
+                        restrict : 'E',
+                        scope:{do:'@'},
+                        template: '<b>uuu{{do}}</b>',
+                        link: function(scope){
+                            $timeout(function(){
+                            console.log(scope)
+                            })
+                        }
+                    }
+                }])
+        </script>
+        <div ng-controller="TestController as tc">
+            <sample-component do="{{tc.do.value}}"></sample-component>
+            
+            <input ng-model="tc.doe.iets" />
+            <input ng-model="tc.do.value" />
+            
+            <api-attribute name="do" direction="oneway" type="text" mode="{{tc.bla.mode}}" binding="doe.iets" value="{{tc.do.value}}"></api-attribute>
+            <api-component-producer name="sample-component" controllerscope="{{tc}}"></api-component-producer>
+        </div>
+    </body>
+</html>
