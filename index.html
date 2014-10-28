@@ -3,8 +3,16 @@
     <head></head>
     <body>
         <div ng-controller="TestController as tc">
-            <rb-component-producer name="name-of-component"></rb-component-producer>
+            <rb-component-producer name="sample"></rb-component-producer>
 
+            <rb-attribute
+                    name="name-of-attribute"
+                    type="text or checkbox"
+                    mode="omitted, static, binding, configurable"
+                    direction="oneway"
+             ></rb-attribute>
+
+            <sample myvalue="{{tc.val}}"></sample>
             <rb-test-case name="Case 1" action="tc.click">
                 Hier staat de inhoud van de test
             </rb-test-case>
@@ -18,7 +26,17 @@
                         this.click = function(){
 
                         }
+                        this.val = '5'
                     })
+                    .directive('sample', [function(){
+                        return {
+                            restrict : 'E',
+                            scope: {
+                                myvalue : '@'
+                            },
+                            template : '<div>{{myvalue}}</div>'
+                        }
+                    }])
         </script>
     </body>
 </html>
