@@ -3,6 +3,8 @@
     <head></head>
     <body>
         <div ng-controller="TestController as tc">
+            <rb-component-producer name="name-of-component"></rb-component-producer>
+
             <rb-test-case name="Case 1" action="tc.click">
                 Hier staat de inhoud van de test
             </rb-test-case>
@@ -14,7 +16,7 @@
             angular.module('app',['rbtest'])
                     .controller('TestController', function(){
                         this.click = function(){
-                            alert('ssa')
+
                         }
                     })
         </script>
