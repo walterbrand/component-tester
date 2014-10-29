@@ -1,0 +1,90 @@
+<!doctype html>
+<html ng-app="app">
+    <head></head>
+    <body ng-controller="Main as m">
+        <custom doit="m.fn()" rb-disabled="false" ng-model="m.val"><rb-message when="bla">__mess__</rb-message></custom>
+        <div ng-include="'/a/b.html'">Here goes the form template</div> {{iets}}
+        <script src="source/angular.js"></script>
+        <script>
+            angular.module('app',[])
+                    .directive('custom', ['$templateCache',function($templateCache){
+                        function template(tElem){
+                            var temp = '<div>' +$templateCache.get('/custom.html') + tElem.html() + '</div>';
+                            return temp
+                        }
+                        function compile(elem, attrs) {
+                            var dictionary = {required:"Dit veld is verplicht"};
+                            [].forEach.call(elem.find('rb-message'),function(message){
+                                var $message = angular.element(message);
+                                dictionary[$message.attr('when')] = $message.html()
+                            })
+                            elem.find('rb-message').remove();
+                            elem.append('<ul><li ng-repeat="validation in validations()">{{validation}}</li></ul>')
+                            attrs.placeholder = attrs.placeholder || 'Geen placeholder';
+                            return function link(scope, elem, attrs, ngModelController){
+                                ngModelController.$render = function(){
+                                    validate();
+                                }
+                                function validate(){
+                                    ngModelController.$setValidity('required', scope.data.value !== '');
+                                }
+                                scope.klik = function(){
+                                    //scope.doit();
+                                }
+                                scope.update = function(){
+                                    ngModelController.$setViewValue(scope.data.value);
+                                    validate();
+                                }
+                                scope.data = {
+                                    value:''
+                                }
+                                scope.validations = function(){
+                                    var messages = [];
+                                    console.log(ngModelController.$error);
+                                    for (var error in ngModelController.$error) {
+                                        messages.push(dictionary[error]);
+                                    }
+                                    return messages;
+                                }
+                            }
+                        }
+
+                        return {
+                            restrict : 'E',
+                            scope: {
+                                doit : '&',
+                                rbDisabled: '@',
+                                placeholder : '@'
+                            },
+                            require : 'ngModel',
+                            template: template,
+                            compile : compile
+                        }
+                    }])
+                    .controller('Main', [function(){
+                        this.fn = function(){alert('dit')}
+                        this.dis = false;
+                    }])
+                    .directive('myvalidator', [function(){
+                        return {
+                            require : 'ngModel',
+                            link : function(_,__,___,ngModelController){
+                                //ngModelController.$pa
+                            }
+                        }
+                    }])
+                    .run(function($templateCache, $rootScope){
+                        $rootScope.iets = 9;
+                        $templateCache.put('/a/b.html','<b>Inhoud</b>');
+                        $templateCache.put('/custom.html', '<div><input ng-click="klik()" ng-change="update()" name="r" ng-required="true" ng-model="data.value" ng-disabled="{{rbDisabled}}" />{{placeholder}}</div>')
+                    })
+        </script>
+        <ul>
+            <li>Gebruik van logger</li>
+            <li>De vier functies</li>
+            <li>ngModel gebruik</li>
+            <li>is name required</li>
+            <li>gedrag bij rbDisabled</li>
+        </ul>
+    </body>
+</html>

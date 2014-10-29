@@ -1,0 +1,65 @@
+<!doctype html>
+<html ng-app="app">
+    <head></head>
+    <body ng-controller="Main as m">
+        <input ng-model="m.name" /><button ng-click="m.doe()">kk</button>
+        Direct: <xyz prop="{{m.name}}" action="m.doe()"></xyz>
+        <hr />
+        Via producer: <producer></producer>
+        <attr binding="m.name" name="prop" mode="oneway"></attr>
+        <script src="../source/angular.js"></script>
+        <script>
+            angular.module('app',[])
+                    .controller('Main', [function(){
+                        this.name = 'Walter'
+                        this.action=function(){alert('klik')}
+                    }])
+                    .directive('producer',['$compile', 'attrService','$timeout', function($compile, attrService, $timeout){
+                        return {
+                            restrict : 'E',
+                            //scope : {},
+                            link : function(scope, elem){
+                                $timeout(function(){
+                                    elem.html('');
+                                    var newScope = scope.$new();
+                                    var attr = attrService.get()[0]
+                                    elem.append($compile('<span>compile<xyz '+attr.name+'="{{'+attr.binding+'}}"></xyz></span>')(newScope))
+                                })
+                            }
+                        }
+                    }])
+                    .directive('xyz',[function(){
+                        return {
+                            restrict:'E',
+                            scope :{
+                                prop:'@',
+                                action : '&'
+                            },
+                            template : '<div>The value = <button ng-click="action()">{{prop}}</button></div>'
+                        }
+                    }])
+                    .directive('attr', ['$compile','attrService',function($compile, attrService){
+                        return {
+                            restrict : 'E',
+                            link : function(scope, elem, attrs){
+                                attrService.register({name:attrs.name, binding:attrs.binding})
+                                elem.append($compile('<input ng-model="'+attrs.binding+'" />')(scope))
+                            }
+                        }
+                    }])
+                    .factory('attrService', [function(){
+                        var register_ = []
+                        function register(attribute){
+                            register_.push(attribute);
+                        }
+                        function get(){
+                            return register_;
+                        }
+                        return {
+                            register: register,
+                            get : get
+                        }
+                    }])
+        </script>
+    </body>
+</html>
