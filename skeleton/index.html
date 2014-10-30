@@ -2,9 +2,9 @@
 <html ng-app="app">
     <head></head>
     <body data-ng-controller="MainController as mc">
-        <zipcode ng-model="mc.zip" rb-disabled="{{mc.disabled}}">
+        <zipcode ng-model="mc.zip" rb-disabled="{{mc.disabled}}" myvalidator>
             <rb-message when="myvalidator">My validation rule</rb-message>
-            <rb-message when="required">This field is required</rb-message>
+            <rb-message when="required">I am really required!!!!!!</rb-message>
         </zipcode>
         {{mc.zip}}
         <zipcode ng-model="mc.zip2"></zipcode>

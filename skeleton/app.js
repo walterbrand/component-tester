@@ -5,4 +5,6 @@ angular.module('app',[])
             '<input ng-model="data.letters" ng-disabled="{{rbDisabled}}" ng-change="onChange()" ng-blur="onBlur()" ng-focus="onFocus()"/>' +
             '{{placeholder}}' +
             '</div>')
+
+        $templateCache.put('/validationmessages.html','<ul><li ng-repeat="message in messages()">{{message}}</li></ul>')
     })
